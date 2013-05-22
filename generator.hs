@@ -78,7 +78,7 @@ walker height width rg iterations wla = stripWalker $ walker' startingRow starti
 
         walker' _   _   _                       0    wl               = wl
         walker' row col ((diffRow, diffCol):ms) iter wl | outofBounds = walker' row col moves iter wl -- Just skip!
-                                                        | otherwise   = walker' row col moves (iter-1) (move newRow newCol wl)
+                                                        | otherwise   = walker' newRow newCol moves (iter-1) (move newRow newCol wl)
             where 
                 newRow = row + diffRow
                 newCol = col + diffCol
