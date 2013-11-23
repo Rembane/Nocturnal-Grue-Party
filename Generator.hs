@@ -33,23 +33,23 @@ randomLabyrinth rg height width = V.fromList $ map (V.fromList) $ take height $ 
 {- ========================================================================= -}
 
 -- Determine if a cell will be born, survive or die.
--- True = It's alive!
+-- Returns the new cell type
 -- TODO: Use a set for survive
-survival :: (Int, [Int]) -> Int -> Int -> Labyrinth -> Bool
+survival :: (Int, [Int]) -> Int -> Int -> Labyrinth -> LBasic
 survival (born, survive) y x labyrinth = survival' $ length $ filter (== Wall) $ catMaybes $ map (\(dy, dx) -> cell (dy + y) (dx + x) labyrinth) surroundings
     where
-        survival' n    = (born == n) || (fromMaybe False $ fmap (== Wall) (cell y x labyrinth)) && (n `elem` survive)
-        surroundings   = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)] -- 9x9 (0, 0), 
+        survival' n | born == n  = Wall 
+                    | birthing n = Wall
+                    | otherwise  = Empty
+        surroundings   = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)] -- 3x3 but not (0, 0)
         row y' lab     = lab V.!? y'
         cell y' x' lab = join $ fmap (row x') (row y' lab)
-
-boolToCell :: Bool -> LBasic
-boolToCell False = Empty
-boolToCell True  = Wall
+        -- This function determines if a wall will be born or not. Int -> Bool
+        birthing n     = (fromMaybe False $ fmap (== Wall) (cell y x labyrinth)) && (n `elem` survive)
 
 -- Pass it a labyrinth, some rules and you get another one back. :D
 maze :: (Int, [Int]) -> Labyrinth -> Labyrinth
-maze (born, survive) labyrinth = V.fromList $ map (\y -> V.fromList $ map (\x -> boolToCell $ survival (born, survive) y x labyrinth) [0..height-1]) [0..width-1]
+maze (born, survive) labyrinth = V.fromList $ map (\y -> V.fromList $ map (\x -> survival (born, survive) y x labyrinth) [0..height-1]) [0..width-1]
     where 
         height = V.length labyrinth
         width  = V.length $ labyrinth V.! 0
