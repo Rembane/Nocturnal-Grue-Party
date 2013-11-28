@@ -1,6 +1,7 @@
 module Generator where
 
 import Control.Monad (join)
+import qualified Data.Set as Set
 import Data.Maybe (catMaybes, fromMaybe)
 import Data.List (intersperse)
 import qualified Data.Vector as V
@@ -25,8 +26,12 @@ labyrinthToStr lab = concat $ intersperse "\n" $ map (concatMap show) $ V.toList
 {- The total randomness approach                                             -}
 {- ========================================================================= -}
 
+-- In the simplest case, the cell is either surrounded by walls or empty
 randomLabyrinth :: StdGen -> Int -> Int -> Labyrinth
-randomLabyrinth rg height width = V.fromList $ map (V.fromList) $ take height $ chunker width $ randoms rg
+randomLabyrinth rg height width = V.fromList $ map (V.fromList) $ take height $ chunker width $ map cellFactory $ randoms rg
+    where
+        cellFactory False = emptyCell
+        cellFactory True  = fullCell
 
 {- ========================================================================= -}
 {- The cellular automata approach                                            -}
@@ -35,17 +40,17 @@ randomLabyrinth rg height width = V.fromList $ map (V.fromList) $ take height $ 
 -- Determine if a cell will be born, survive or die.
 -- Returns the new cell type
 -- TODO: Use a set for survive
-survival :: (Int, [Int]) -> Int -> Int -> Labyrinth -> LBasic
-survival (born, survive) y x labyrinth = survival' $ length $ filter (== Wall) $ catMaybes $ map (\(dy, dx) -> cell (dy + y) (dx + x) labyrinth) surroundings
+survival :: (Int, [Int]) -> Int -> Int -> Labyrinth -> Cell
+survival (born, survive) y x labyrinth = survival' $ length $ filter isFull $ catMaybes $ map (\(dy, dx) -> cell (dy + y) (dx + x) labyrinth) surroundings
     where
-        survival' n | born == n  = Wall 
-                    | birthing n = Wall
-                    | otherwise  = Empty
+        survival' n | born == n  = fullCell                    
+                    | birthing n = fullCell 
+                    | otherwise  = emptyCell
         surroundings   = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)] -- 3x3 but not (0, 0)
         row y' lab     = lab V.!? y'
         cell y' x' lab = join $ fmap (row x') (row y' lab)
         -- This function determines if a wall will be born or not. Int -> Bool
-        birthing n     = (fromMaybe False $ fmap (== Wall) (cell y x labyrinth)) && (n `elem` survive)
+        birthing n     = (fromMaybe False $ fmap isFull (cell y x labyrinth)) && (n `elem` survive)
 
 -- Pass it a labyrinth, some rules and you get another one back. :D
 maze :: (Int, [Int]) -> Labyrinth -> Labyrinth
