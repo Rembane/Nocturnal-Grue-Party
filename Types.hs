@@ -1,10 +1,13 @@
-module Types (LBasic(..), Labyrinth) where
+{-# LANGUAGE DeriveGeneric, OverloadedStrings #-}
+module Types (LBasic(..), Labyrinth, ProgramOptions(..)) where
 
+import Data.Aeson (FromJSON)
 import qualified Data.Vector as V
+import GHC.Generics
 import System.Random (Random, random, randomR)
 
 {- ========================================================================= -}
-{- Some assorted datatypes                                                   -}
+{- Labyrinth datatypes                                                       -}
 {- ========================================================================= -}
 
 data LBasic = Empty | Wall
@@ -23,4 +26,17 @@ instance Random LBasic where
 -- Rows x cols
 type Labyrinth = V.Vector (V.Vector LBasic)
 
+{- ========================================================================= -}
+{- Utility datatypes                                                         -}
+{- ========================================================================= -}
 
+data ProgramOptions = 
+    Options { optIterations      :: Int
+            , optBornRule        :: Int
+            , optSurviveRule     :: [Int]
+            , optLabyrinthWidth  :: Int
+            , optLabyrinthHeight :: Int
+            }
+    deriving (Show, Generic)
+
+instance FromJSON ProgramOptions

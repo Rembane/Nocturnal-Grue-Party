@@ -58,16 +58,3 @@ mazeLoop :: Int -> (Labyrinth -> Labyrinth) -> Labyrinth -> Labyrinth
 mazeLoop 0 _ lab = lab
 mazeLoop n f lab = mazeLoop (n-1) f (f lab)
 
-{- ========================================================================= -}
-
-initialize :: IO StdGen
-initialize = do
-    newStdGen
-    rg <- getStdGen
-    return rg
-
-main = do
-    args <- getArgs
-    rg   <- initialize
-    let iterations = read $ head args
-    putStrLn $ labyrinthToStr $ mazeLoop iterations (maze (3, [1,2,3,4,5])) (randomLabyrinth rg 20 20)

@@ -1,0 +1,8 @@
+{ 
+    "optIterations"      : 1,
+    "optBornRule"        : 3,
+    "optSurviveRule"     : [1,2,3,4,5],
+    "optLabyrinthWidth"  : 20,
+    "optLabyrinthHeight" : 20
+}
+
