@@ -1,5 +1,5 @@
 {-# LANGUAGE DeriveGeneric, OverloadedStrings #-}
-module Types (Walls(..), Cell, Labyrinth, emptyCell, fullCell, isFull) where
+module Types (Walls(..), Cell, Labyrinth, ProgramOptions(..), emptyCell, fullCell, isFull) where
 
 import Data.Aeson (FromJSON)
 import qualified Data.Set as Set
