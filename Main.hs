@@ -28,5 +28,8 @@ main = do
             let survive = optSurviveRule d
             let height  = optLabyrinthHeight d
             let width   = optLabyrinthWidth d
-            putStrLn $ labyrinthToStr $ mazeLoop its (maze (born, survive)) (randomLabyrinth rg height width)
+
+            case optLabyrinthType d of  
+                RandomLabyrinth           -> putStrLn $ labyrinthToStr $ randomLabyrinth rg height width
+                CellularAutomataLabyrinth -> putStrLn $ labyrinthToStr $ mazeLoop its (maze (born, survive)) (randomLabyrinth rg height width)
 

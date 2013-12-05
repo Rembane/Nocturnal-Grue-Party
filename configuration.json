@@ -1,8 +1,9 @@
 { 
-    "optIterations"      : 1,
+    "optIterations"      : 10,
     "optBornRule"        : 3,
     "optSurviveRule"     : [1,2,3,4,5],
     "optLabyrinthWidth"  : 20,
-    "optLabyrinthHeight" : 20
+    "optLabyrinthHeight" : 20,
+    "optLabyrinthType"   : "CellularAutomataLabyrinth"
 }
 

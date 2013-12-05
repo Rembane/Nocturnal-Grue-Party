@@ -1,5 +1,5 @@
 {-# LANGUAGE DeriveGeneric, OverloadedStrings #-}
-module Types (Walls(..), Cell, Labyrinth, ProgramOptions(..), emptyCell, fullCell, isFull) where
+module Types (Walls(..), Cell, Labyrinth, LabyrinthType(..), ProgramOptions(..), emptyCell, fullCell, isFull) where
 
 import Data.Aeson (FromJSON)
 import qualified Data.Set as Set
@@ -28,12 +28,18 @@ type Labyrinth = V.Vector (V.Vector Cell)
 {- Utility datatypes                                                         -}
 {- ========================================================================= -}
 
+data LabyrinthType = RandomLabyrinth | CellularAutomataLabyrinth
+    deriving (Show, Generic)
+
+instance FromJSON LabyrinthType
+
 data ProgramOptions = 
     Options { optIterations      :: Int
             , optBornRule        :: Int
             , optSurviveRule     :: [Int]
             , optLabyrinthWidth  :: Int
             , optLabyrinthHeight :: Int
+            , optLabyrinthType   :: LabyrinthType
             }
     deriving (Show, Generic)
 
